@@ -24,7 +24,7 @@ jobs:
     - name: Find Python files in PR
       id: find-files
       run: |
-        echo "$(git diff --name-only HEAD $(git merge-base HEAD master) | grep '.py$')" >> $GITHUB_ENV
+        echo "$(git diff --name-only HEAD master | grep '.py$')" >> $GITHUB_ENV
 
     - name: Check Python syntax
       run: |

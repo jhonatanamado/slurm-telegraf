@@ -1,0 +1,38 @@
+name: Telegraf LineProtocol
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  syntax-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: pip install pylint
+
+    - name: Find Python files in PR
+      id: findfiles
+      run: |
+        git fetch origin master
+        files=$(git diff --name-only origin/master -- '*.py' | paste -sd "," -)
+        echo "files2check=${files}" >> "$GITHUB_OUTPUT"
+
+    - name: Check Python syntax
+      run: |
+        echo "$FILES" | tr ',' '\n' | while read -r file; do
+          echo "Checking Syntax for $file"
+          pylint --errors-only "$file"
+        done
+      env:
+        FILES: ${{ steps.findfiles.outputs.files2check }}

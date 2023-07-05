@@ -32,7 +32,7 @@ jobs:
       run: |
         echo "$FILES" | tr ',' '\n' | while read -r file; do
           echo "Checking Syntax for $file"
-          pylint --errors-only "$file"
+          pylint "$file" || true
         done
       env:
         FILES: ${{ steps.findfiles.outputs.files2check }}

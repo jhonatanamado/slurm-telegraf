@@ -62,8 +62,9 @@ for line in sys.stdin:
   features = item.pop(0)
   if ',' in features:
     for i in features.split(','):
-      k, v = i.split(':')
-      fields.append( f"{k.lower()}={v.lower()}" )
+      if ':' in i:
+        k, v = i.split(':')
+        fields.append( f"{k.lower()}={v.lower()}" )
 
   for gres, number in parse_gres( item.pop(0) ):
     this[gres + '_total'] = number

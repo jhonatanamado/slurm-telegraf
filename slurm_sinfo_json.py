@@ -186,6 +186,7 @@ def main():
             sub_dict['idb_tags'] = idb_tags
             sub_dict['idb_fields'] = idb_fields
             sub_dict['state_f']=sub_dict['state']
+            #sub_dict['reason_f']=sub_dict['reason']
             sub_dict['reason_f'] = sub_dict['reason'].split(':', 1)[0] if ':' in sub_dict['reason'] else sub_dict['reason']
             sub_dict['reason'] = sub_dict['reason'].split(':', 1)[0] if ':' in sub_dict['reason'] else sub_dict['reason']
             if sub_dict['state_flags']:

@@ -62,8 +62,16 @@ for line in sys.stdin:
   features = item.pop(0)
   if ',' in features:
     for i in features.split(','):
-      k, v = i.split(':')
-      fields.append( f"{k.lower()}={v.lower()}" )
+      if ':' in i:
+        #k, v = i.split(':')
+        #fields.append( f"{k.lower()}={v.lower()}" )
+        parts = i.split(':')
+        if len(parts) > 2:
+          k = parts[0]
+          v = ':'.join(parts[1:])
+        else:
+          k, v = parts
+        fields.append( f"{k.lower()}={v.lower()}" )
 
   for gres, number in parse_gres( item.pop(0) ):
     this[gres + '_total'] = number
@@ -91,7 +99,7 @@ for line in sys.stdin:
   values.append( f"state=\"{this['state']}\"" )
   if this['cpu_load'] != 'N/A':
     values.append( f"cpu_load={this['cpu_load']}" )
-
+  """
   if 'gpu_total' in this:
     for i in ( 'gpu_total', 'gpu_allocated' ):
       values.append( f"{i}={this[i]}i" )
@@ -103,7 +111,7 @@ for line in sys.stdin:
     if not 'gpu_idle' in totals[this['state']]:
       totals[this['state']]['gpu_idle'] = 0
     totals[this['state']]['gpu_idle'] += idle
-
+  """
   print( f"sinfo-node,{','.join(fields)} {','.join(values)}" )
 
 # print summary

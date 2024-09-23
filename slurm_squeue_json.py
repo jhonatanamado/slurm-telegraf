@@ -145,17 +145,31 @@ def main():
                     "suspend_time","preempt_time","pre_sus_time","total_cores",
                     "total_memory","total_jobs","priority","comp_startime","comp_endtime"]
 
+        valid_qos = ["normal","scavenger","expedite","preemptable"]
+
         for jobs in json_squeue['jobs']:
             sub_dict = {key: jobs[key] for key in attributes2check if key in jobs}
+            """
             if '^' in sub_dict['qos']:
                 sub_dict['qos'] = sub_dict['qos'].split('^')[1]
                 if '@' in sub_dict['qos']:
                     sub_dict['qos'] = sub_dict['qos'].split('@')[0]
+            """
+            qos_value = sub_dict['qos']
+            for qos in valid_qos:
+                if qos in qos_value:
+                    sub_dict['qos'] = qos
+                    break
             #this will give an exception if ^ or @ is the last element of the string.
             sub_dict['timestamp'] =  timestamp
             sub_dict['idb_tags'] = idb_tags
             sub_dict['idb_fields'] = idb_fields
             #Add new concept to monitor resources by experiment and by sesion.
+
+            # Check if '@' is present in sub_dict['account']
+            if '@' in sub_dict['account']:
+                # Split the string and keep everything before '@'
+                sub_dict['account'] = sub_dict['account'].split('@')[0]
             if ":" in sub_dict['account']:
                 facility_repo=sub_dict['account'].split(":")
                 facility=facility_repo[1]
@@ -165,6 +179,7 @@ def main():
             else:
                 sub_dict['facility'] = sub_dict['account']
                 sub_dict['repo'] = "default"
+
             if sub_dict['job_state'] == "PENDING" and ((timestamp - sub_dict['submit_time']) > args.tPending*60):
                 sub_dict['time_pending'] = timestamp - sub_dict['submit_time']
                 sub_dict['long_pending'] = True

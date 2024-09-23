@@ -12,6 +12,8 @@ for line in sys.stdin:
   this = {}
 
   try:
+    valid_qos = ["normal","scavenger","expedite","preemptable"]
+
     out = line.strip().split('|')
 
     this['jobid'] = out.pop(0)
@@ -19,12 +21,22 @@ for line in sys.stdin:
     this['user'] = out.pop(0)
     this['partition'] = out.pop(0).replace(',', '_').replace('\ ', '')
     this['account'] = out.pop(0)
+    if '@' in this['account']:
+        this['account'] = this['account'].split('@')[0]
+
     this['qos'] = out.pop(0)
+    """
     if '^' in this['qos']:
         this['qos'] = this['qos'].split('^')[1]
         if '@' in this['qos']:
             this['qos'] = this['qos'].split('@')[0]
     #this will give an exception if ^ or @ is the last element of the string.
+    """
+    qos_value = this['qos']
+    for qos in valid_qos:
+        if qos in qos_value:
+            this['qos'] = qos
+            break
 
     this['tasks'] = out.pop(0)
     tres = out.pop(0)
